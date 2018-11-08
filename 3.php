@@ -5,24 +5,24 @@
  */
 class HTMLClient
 {
-	/**
+    /**
     * @var string Ссылка
     */
     private $url;
 
-	/**
+     /**
      * HTMLClient constructor.
      * @param string $url ссылка
      */
-	public function __construct(string $url)
-	{
-		if(!$this->isValidUrl($url)) {
+    public function __construct(string $url)
+    {
+	if(!$this->isValidUrl($url)) {
             throw new \Exception('Ссылка не верная!');
         }
         $this->url = $url;
-	}
+    }
 	
-	/**
+    /**
      * Проверка ссылки
      * @param string $url ссылка
      * @return boolean|string
@@ -32,21 +32,21 @@ class HTMLClient
         return filter_var($url, FILTER_VALIDATE_URL) !== false;
     }
 	
-	/**
+    /**
      * Получение html
      * @return string
-	 * @throws Exception
+     * @throws Exception
      */
-	public function getHTML() : string
-	{
-		$html = file_get_contents($this->url);
+    public function getHTML() : string
+    {
+        $html = file_get_contents($this->url);
 
         if(empty($html)) {
             throw new \Exception('Ответ не получен или пустой!');
         }
-		
-		return $html;
-	}
+   
+        return $html;
+    }
 	
 }
 
@@ -58,9 +58,9 @@ class HTMLParser
     /**
      * @var Клиент
      */
-	private $client;
+    private $client;
     
-	/**
+    /**
      * @var array Список тегов и их кол-во
      */
     private $htmlList;
@@ -71,7 +71,7 @@ class HTMLParser
      */
     public function __construct(HTMLClient $client)
     {
-		$this->client = $client;
+        $this->client = $client;
         $this->htmlList = [];
     }
 
@@ -81,16 +81,16 @@ class HTMLParser
      */
     public function parse()
     {
-		$html = $this->client->getHTML();
+        $html = $this->client->getHTML();
 
         // Не совсем верная, но другую не подобрал =(
-		preg_match_all('/<([^\/!][a-z1-9]*)/i', $html, $matches);
+        preg_match_all('/<([^\/!][a-z1-9]*)/i', $html, $matches);
 		
         if (!empty($matches[1])){
             $this->htmlList = array_count_values($matches[1]);
         }
 		
-		return $this;
+        return $this;
     }
 
     /**
@@ -108,7 +108,7 @@ class HTMLParser
 ###############################################################
 
 try {
-	$parser = new HTMLParser(new HTMLClient('https://github.com/'));
+    $parser = new HTMLParser(new HTMLClient('https://github.com/'));
     $htmlList = $parser->parse()->getResult();
     if(count($htmlList) > 0){
         foreach ($htmlList as $tag => $cnt){
