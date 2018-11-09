@@ -89,11 +89,12 @@ class HTMLParser
     {
         $html = $this->client->getHTML();
 
-        // Не совсем верная, но другую не подобрал =(
-        preg_match_all('/<([^\/!][a-z1-9]*)/i', $html, $matches);
+        $dom = new \DOMDocument;
+        @$dom->loadHTML($html);
 
-        if (!empty($matches[1])){
-            $this->htmlList = array_count_values($matches[1]);
+        $tags = $dom->getElementsByTagName('*');
+        foreach ($tags as $i => $tag){
+            $this->htmlList[$tags->item($i)->nodeName] += 1;
         }
 
         return $this;
@@ -114,7 +115,7 @@ class HTMLParser
 ###############################################################
 
 try {
-    $parser = new HTMLParser(new HTMLClient('https://github.com/'));
+    $parser = new HTMLParser(new HTMLClient('https://marketcall.ru/'));
     $htmlList = $parser->parse()->getResult();
     if(count($htmlList) > 0){
         foreach ($htmlList as $tag => $cnt){
