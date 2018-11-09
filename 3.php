@@ -1,27 +1,33 @@
 <?php
 
+interface ClientInterface
+{
+    public function getHTML() : string;
+}
+
+
 /**
  * Класс для получения html по ссылке
  */
-class HTMLClient
+class HTMLClient implements ClientInterface
 {
     /**
-    * @var string Ссылка
-    */
+     * @var string Ссылка
+     */
     private $url;
 
-     /**
+    /**
      * HTMLClient constructor.
      * @param string $url ссылка
      */
     public function __construct(string $url)
     {
-	if(!$this->isValidUrl($url)) {
+        if(!$this->isValidUrl($url)) {
             throw new \Exception('Ссылка не верная!');
         }
         $this->url = $url;
     }
-	
+
     /**
      * Проверка ссылки
      * @param string $url ссылка
@@ -31,7 +37,7 @@ class HTMLClient
     {
         return filter_var($url, FILTER_VALIDATE_URL) !== false;
     }
-	
+
     /**
      * Получение html
      * @return string
@@ -44,10 +50,10 @@ class HTMLClient
         if(empty($html)) {
             throw new \Exception('Ответ не получен или пустой!');
         }
-   
+
         return $html;
     }
-	
+
 }
 
 /**
@@ -59,7 +65,7 @@ class HTMLParser
      * @var Клиент
      */
     private $client;
-    
+
     /**
      * @var array Список тегов и их кол-во
      */
@@ -67,9 +73,9 @@ class HTMLParser
 
     /**
      * HTMLParser constructor.
-     * @param HTMLClient $client
+     * @param ClientInterface $client
      */
-    public function __construct(HTMLClient $client)
+    public function __construct(ClientInterface $client)
     {
         $this->client = $client;
         $this->htmlList = [];
@@ -85,11 +91,11 @@ class HTMLParser
 
         // Не совсем верная, но другую не подобрал =(
         preg_match_all('/<([^\/!][a-z1-9]*)/i', $html, $matches);
-		
+
         if (!empty($matches[1])){
             $this->htmlList = array_count_values($matches[1]);
         }
-		
+
         return $this;
     }
 
